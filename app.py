@@ -86,9 +86,35 @@ st.markdown(
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
-    @keyframes dotPulse {
-        0%, 100% { opacity: 0.3; }
-        50% { opacity: 0.6; }
+    @keyframes float1 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(30px, -20px) rotate(5deg); }
+        50% { transform: translate(-10px, 30px) rotate(-3deg); }
+        75% { transform: translate(20px, 10px) rotate(2deg); }
+    }
+    @keyframes float2 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(-25px, 15px) rotate(-4deg); }
+        50% { transform: translate(15px, -25px) rotate(6deg); }
+        75% { transform: translate(-15px, -10px) rotate(-2deg); }
+    }
+    @keyframes float3 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(20px, 25px) rotate(3deg); }
+        66% { transform: translate(-25px, -15px) rotate(-5deg); }
+    }
+    @keyframes float4 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(-15px, 20px) rotate(-4deg); }
+        66% { transform: translate(25px, -10px) rotate(5deg); }
+    }
+    @keyframes float5 {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(10px, -20px); }
+    }
+    @keyframes float6 {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(-20px, 10px); }
     }
     .stApp {
         background: #0a0e17 !important;
@@ -105,7 +131,7 @@ st.markdown(
     .bg-dots {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background-image: radial-gradient(rgba(0,229,255,0.04) 1px, transparent 1px);
+        background-image: radial-gradient(rgba(0,229,255,0.03) 1px, transparent 1px);
         background-size: 30px 30px;
         pointer-events: none;
         z-index: 0;
@@ -113,9 +139,86 @@ st.markdown(
     .bg-vignette {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+        background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.5) 100%);
         pointer-events: none;
         z-index: 0;
+    }
+    .annotation-mark {
+        position: fixed;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.15;
+    }
+    .mark-crosshair {
+        width: 40px; height: 40px;
+        border: 1px solid rgba(0,229,255,0.4);
+        border-radius: 50%;
+        animation: float1 12s ease-in-out infinite;
+    }
+    .mark-crosshair::before, .mark-crosshair::after {
+        content: "";
+        position: absolute;
+        background: rgba(0,229,255,0.3);
+    }
+    .mark-crosshair::before {
+        width: 1px; height: 100%; left: 50%; top: 0;
+    }
+    .mark-crosshair::after {
+        width: 100%; height: 1px; top: 50%; left: 0;
+    }
+    .mark-dim-line {
+        width: 60px; height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(139,92,246,0.4), transparent);
+        animation: float2 15s ease-in-out infinite;
+    }
+    .mark-dim-line::before, .mark-dim-line::after {
+        content: "";
+        position: absolute;
+        width: 4px; height: 4px;
+        border: 1px solid rgba(139,92,246,0.4);
+        background: transparent;
+        top: -1px;
+    }
+    .mark-dim-line::before { left: 0; border-radius: 50%; }
+    .mark-dim-line::after { right: 0; border-radius: 50%; }
+    .mark-arrow {
+        width: 0; height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 12px solid rgba(0,229,255,0.3);
+        animation: float3 10s ease-in-out infinite;
+    }
+    .mark-measure {
+        width: 50px; height: 50px;
+        border: 1px dashed rgba(0,229,255,0.25);
+        border-radius: 4px;
+        animation: float4 18s ease-in-out infinite;
+    }
+    .mark-measure::before {
+        content: "";
+        position: absolute;
+        top: 50%; left: 0; right: 0;
+        height: 1px;
+        background: rgba(0,229,255,0.2);
+    }
+    .mark-measure::after {
+        content: "";
+        position: absolute;
+        left: 50%; top: 0; bottom: 0;
+        width: 1px;
+        background: rgba(0,229,255,0.2);
+    }
+    .mark-dot {
+        width: 6px; height: 6px;
+        background: rgba(0,229,255,0.3);
+        border-radius: 50%;
+        animation: float5 8s ease-in-out infinite;
+    }
+    .mark-dot-2 {
+        width: 4px; height: 4px;
+        background: rgba(139,92,246,0.3);
+        border-radius: 50%;
+        animation: float6 10s ease-in-out infinite;
     }
     .main-header {
         position: relative;
@@ -156,14 +259,31 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown('<div class="bg-gradient"></div>'
+st.markdown(
+    '<div class="bg-gradient"></div>'
     '<div class="bg-dots"></div>'
     '<div class="bg-vignette"></div>'
+    # Annotation markers floating in background
+    '<div class="annotation-mark mark-crosshair" style="top:15%;left:8%;"></div>'
+    '<div class="annotation-mark mark-dim-line" style="top:25%;left:75%;"></div>'
+    '<div class="annotation-mark mark-arrow" style="top:60%;left:5%;"></div>'
+    '<div class="annotation-mark mark-measure" style="top:45%;left:85%;"></div>'
+    '<div class="annotation-mark mark-dot" style="top:70%;left:20%;"></div>'
+    '<div class="annotation-mark mark-dot-2" style="top:35%;left:60%;"></div>'
+    '<div class="annotation-mark mark-crosshair" style="top:80%;left:70%;"></div>'
+    '<div class="annotation-mark mark-dim-line" style="top:10%;left:40%;"></div>'
+    '<div class="annotation-mark mark-arrow" style="top:55%;left:50%;"></div>'
+    '<div class="annotation-mark mark-measure" style="top:85%;left:30%;"></div>'
+    '<div class="annotation-mark mark-dot" style="top:20%;left:55%;"></div>'
+    '<div class="annotation-mark mark-dot-2" style="top:50%;left:15%;"></div>'
+    # Content wrapper starts here
     '<div class="content-wrapper">'
     '<div class="main-header">'
     '<p class="futuristic-header">:material/straighten: Surface Auto-Annotator</p>'
     '<p class="futuristic-subheader">AI-powered paved surface annotation — road, walkway, bikepath &amp; cars</p>'
-    '</div>', unsafe_allow_html=True)
+    '</div>',
+    unsafe_allow_html=True,
+)
 
 st.space("medium")
 
