@@ -123,39 +123,25 @@ python annotate.py
 | `summary.csv` | Per-image counts and areas. |
 | `classes.txt` / `dataset.yaml` | YOLO dataset config, one line per class. |
 
-## Deploy to Hugging Face Spaces (free)
+## Deploy to Streamlit Community Cloud (free)
 
-This app deploys to a **free** Hugging Face Space (Docker SDK) — no Render, no
-credit card. The build uses CPU-only torch so the image stays small.
+This app deploys to the **free** [Streamlit Community Cloud](https://share.streamlit.io)
+— no Render, no Hugging Face, no credit card. `requirements.txt` installs the
+CPU-only torch build and `packages.txt` provides the OpenCV system libs.
 
 **Prerequisites**
-- A free account at <https://huggingface.co/join>
-- A **Write** access token at <https://huggingface.co/settings/tokens>
-- `git` installed, and a commit on your local repo (`main`)
+- A GitHub account and this repo pushed to it.
+- A free Streamlit Community Cloud login (via GitHub).
 
-**Deploy (one command)**
+**Deploy (GUI, ~2 minutes)**
+1. Push this repo to GitHub (`origin`).
+2. Sign in at <https://share.streamlit.io> with GitHub.
+3. Click **New app** → select this repo → branch `main` → main file `app.py`.
+4. **Deploy**. URL will be `https://<user>-surface-annotator.streamlit.app`.
 
-Windows PowerShell:
-```powershell
-.\deploy.ps1
-```
-
-Git Bash / Linux / macOS:
-```bash
-bash deploy.sh
-```
-
-Each script prompts for your HF username, space name, and token (token is kept
-in memory only), then:
-1. Creates the Space (`sdk: docker`, `hardware: cpu-basic`, public),
-2. Adds it as a git remote (`hf`),
-3. Pushes `main`, which builds the Docker image and boots the app.
-
-**Speed it up with the first model download:** add `HUGGING_FACE_HUB_TOKEN` or
-pre-warm the model cache so users don't wait ~30s on the first annotation.
-
-**Space URL:** `https://huggingface.co/spaces/<user>/<space>`
-**Build logs:** `https://huggingface.co/spaces/<user>/<space>/logs`
+First load takes ~1–2 min (CPU-only torch + model download). The app sleeps
+after ~7 days of inactivity and wakes on the next visit. On the free tier the
+space is public and can be deleted any time.
 
 ## Import into CVAT
 
