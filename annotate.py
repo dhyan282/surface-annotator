@@ -1,23 +1,17 @@
 """
-Surface Auto-Annotator - CLI (road + walkway + bikepath, paved surface only)
+Surface Auto-Annotator - CLI (single surface class)
 ---------------------------------------------------
-Auto-labels images using SegFormer (Cityscapes) with per-class polygons.
+Auto-labels images using SegFormer (Cityscapes) with single polygon.
 
 - Input:  images/  (any jpg/png/jpeg)
 - Output: labels/  (YOLO-seg .txt polygons, one line per polygon:
                      "<class_id> <x1> <y1> <x2> <y2> ...")
-- Preview: preview/ (images with class-colored polygon outlines + filled overlay)
+- Preview: preview/ (images with class-colored polygon outline + filled overlay)
 - Annotated copy: annotated images/
 - CVAT export: cvat_annotations.xml
 
-Classes (per-class polygons for precise annotation):
-  0  surface_road       - paved road (Cityscapes road + bikepaths by default;
-                          bikepaths split out into class 2 when detected)
-  1  surface_walkway    - paved walkway / sidewalk
-  2  surface_bikepath   - bike path (only when detected inside the road mask;
-                          otherwise falls back into class 0)
-  3  car                - cars/trucks/buses, optional (YOLOv8-seg),
-                          clipped to the surface mask
+Classes (single merged surface class):
+  0  surface_road       - all paved surfaces merged (road, walkway, bikepath)
 """
 
 from pathlib import Path
@@ -87,7 +81,7 @@ def main():
     summary_path = ROOT / "summary.csv"
     all_results = []
     with open(summary_path, "w") as f:
-        f.write("image,road_polys,walkway_polys,bikepath_polys,car_polys,area_px\n")
+        f.write("image,road_polys,area_px\n")
         for i, img_path in enumerate(images, 1):
             print(f"[{i}/{len(images)}] {img_path.name}")
             r = annotator.annotate(img_path, LBL_DIR, PREVIEW_DIR, ANNOTATED_DIR)
@@ -98,15 +92,12 @@ def main():
             f.write(
                 f"{img_path.name},"
                 f"{r.get('road_polys', 0)},"
-                f"{r.get('walkway_polys', 0)},"
-                f"{r.get('bike_polys', 0)},"
-                f"{r.get('car_polys', 0)},"
                 f"{total_area:.1f}\n"
             )
 
     # Export CVAT XML
     import_path = export_cvat_xml(
-        all_results, CVAT_XML_PATH, class_prefix=CLASS_PREFIX,
+        all_results, CVAT_XML_PATH, class_prefix=CLASS_PREFIX, detect_cars=False,
     )
     print(f"\n[OK] Done.")
     print(f"  Labels:        {LBL_DIR}")
@@ -117,10 +108,7 @@ def main():
     print(f"  Dataset cfg:   {ROOT / 'dataset.yaml'}")
     print(f"  CVAT XML:      {import_path}")
     print(
-        "\nPreview images: red outline = " + CLASS_PREFIX + "road, "
-        "green outline = " + CLASS_PREFIX + "walkway, "
-        "cyan outline = " + CLASS_PREFIX + "bikepath, "
-        "blue outline = car (when enabled)."
+        "\nPreview images: red outline = " + CLASS_PREFIX + "road"
     )
 
 

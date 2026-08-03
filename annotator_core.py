@@ -49,35 +49,27 @@ import torch
 from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
 
 # ---- Class definitions ----
-# Class 0: paved road (including any bike paths the model lumps here).
-# Class 1: walkway / sidewalk.
-# Class 2: bike path (separated cycle path; only emitted when the bikepath
-#          detector fires inside the road mask).
-# Class 3: car (YOLO, optional).
+# Single surface class (merged): paved road, walkway, and bikepath all together
 CLASS_PREFIX = "surface_"
 
 CLASSES = [
-    (0, f"{CLASS_PREFIX}road"),
-    (1, f"{CLASS_PREFIX}walkway"),
-    (2, f"{CLASS_PREFIX}bikepath"),
-    (3, "car"),
+    (0, f"{CLASS_PREFIX}road"),  # Includes road, walkway, and bikepath
 ]
 
 # Backwards-compat: old callers (and CVAT exports) still expect this name.
 SURFACE_SURFACE_NAME = f"{CLASS_PREFIX}surface"
 
 # SegFormer (Cityscapes) class ids mapped to OUR per-class surface classes.
-#   0 = road        -> our class 0  (surface_road)
-#   1 = sidewalk    -> our class 1  (surface_walkway)
-SURFACE_SEG_IDS = {0: 0, 1: 1}
+#   0 = road        -> our class 0  (surface_road - merged)
+#   1 = sidewalk    -> merged into road
+SURFACE_SEG_IDS = {0: 0, 1: 0}  # Both map to class 0
 
 # Cityscapes "vegetation" class. Pixels where P(vegetation) >= P(surface) are
 # excluded, so grass/shrubs bleeding into the road don't get annotated.
 VEGETATION_SEG_IDS = {8}
 
-# COCO class ids that we map to our "car" class (id 3).
-#  2 = car, 5 = bus, 7 = truck.
-CAR_COCO_IDS = {2, 5, 7}
+# COCO class ids - car detection removed
+CAR_COCO_IDS = set()  # No car classes
 
 BLACK_THRESHOLD = 15  # RGB values below this in ALL channels = "black" (excluded)
 
@@ -134,12 +126,9 @@ BIKEPATH_EDGE_DENSITY = 0.04
 BIKEPATH_MIN_FRACTION = 0.015
 
 # ---- Overlay colors (BGR) ----
-# Per-class overlay colors.  Red road, green walkway, cyan bike path, blue car.
+# Single surface class - use a neutral color
 OVERLAY_COLORS_BGR = {
-    0: (0, 0, 255),     # red   - road
-    1: (0, 255, 0),     # green - walkway
-    2: (255, 255, 0),   # cyan  - bike path
-    3: (255, 0, 0),     # blue  - car
+    0: (0, 0, 255),     # red - single merged surface class
 }
 OVERLAY_ALPHA = 0.30
 OVERLAY_THICKNESS = 2

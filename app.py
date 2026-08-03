@@ -341,11 +341,6 @@ with st.sidebar:
         value=True,
         help="Removes grass/leaf pixels that are never paved surface.",
     )
-    prefix = st.text_input(
-        "Class name prefix",
-        value=CLASS_PREFIX,
-        help="Prepended to the class names in all annotation outputs.",
-    )
 
     st.markdown("### :material/rocket_launch: Advanced")
     dual = st.toggle(
@@ -353,19 +348,6 @@ with st.sidebar:
         value=DUAL_MODE,
         help="Runs a second SegFormer model in parallel and merges their outputs for "
         "higher accuracy.",
-    )
-    detect_cars = st.toggle(
-        "Detect cars (YOLOv8-seg)",
-        value=False,
-        help="Also detect cars / trucks / buses and emit them as 'car' parts. Each "
-        "car polygon is clipped to the surface mask, so only the part of the car "
-        "that sits on the road / walkway is annotated.",
-    )
-    car_conf = st.slider(
-        "Car confidence threshold",
-        0.10, 0.90, 0.35, 0.05,
-        help="Minimum YOLOv8-seg confidence to keep a car detection.",
-        disabled=not detect_cars,
     )
 
     st.divider()
@@ -395,16 +377,10 @@ with st.sidebar:
     st.markdown("### :material/palette: Classes Detected")
     st.markdown(
         f'<span class="class-badge" style="background:rgba(239,68,68,0.2);color:#ef4444;">'
-        f"0 {prefix}road</span> "
-        f'<span class="class-badge" style="background:rgba(16,185,129,0.2);color:#10b981;">'
-        f"1 {prefix}walkway</span> "
-        f'<span class="class-badge" style="background:rgba(6,182,212,0.2);color:#06b6d4;">'
-        f"2 {prefix}bikepath</span> "
-        f'<span class="class-badge" style="background:rgba(59,130,246,0.2);color:#3b82f6;">'
-        f"3 car</span>",
+        f"0 {prefix}road</span>",
         unsafe_allow_html=True,
     )
-    st.caption("Each class is drawn with its own outline color in the preview.")
+    st.caption("Single surface class - all paved surfaces (road, walkway, bikepath) merged together.")
 
 
 # ---- Main page ----
