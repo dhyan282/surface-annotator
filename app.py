@@ -206,11 +206,15 @@ st.markdown(
         var y = e.clientY / window.innerHeight;
         var glow1 = document.querySelector('.bg-glow');
         var glow2 = document.querySelector('.bg-glow-2');
+        var grid = document.querySelector('.bg-grid');
         if (glow1) {
-            glow1.style.transform = 'translate(' + ((x - 0.5) * 40) + 'px, ' + ((y - 0.5) * 40) + 'px)';
+            glow1.style.transform = 'translate(' + ((x - 0.5) * 80) + 'px, ' + ((y - 0.5) * 80) + 'px)';
         }
         if (glow2) {
-            glow2.style.transform = 'translate(' + ((x - 0.5) * -30) + 'px, ' + ((y - 0.5) * -30) + 'px)';
+            glow2.style.transform = 'translate(' + ((x - 0.5) * -60) + 'px, ' + ((y - 0.5) * -60) + 'px)';
+        }
+        if (grid) {
+            grid.style.backgroundPosition = ((x - 0.5) * 20) + 'px ' + ((y - 0.5) * 20) + 'px';
         }
     });
     </script>
