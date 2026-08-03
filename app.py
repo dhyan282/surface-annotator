@@ -81,6 +81,41 @@ def load_annotator(
 st.markdown(
     """
     <style>
+    @keyframes gridMove {
+        0% { background-position: 0 0; }
+        100% { background-position: 50px 50px; }
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+    }
+    .main-header {
+        position: relative;
+        padding: 2rem 2rem 1rem 2rem;
+        margin: -1rem -1rem 1rem -1rem;
+        background: linear-gradient(135deg, #0a0e17 0%, #111827 50%, #0a0e17 100%);
+        border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+        overflow: hidden;
+    }
+    .main-header::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image:
+            linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: gridMove 20s linear infinite;
+        pointer-events: none;
+    }
+    .main-header::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00e5ff, #8b5cf6, transparent);
+        animation: pulse 3s ease-in-out infinite;
+    }
     .futuristic-header {
         background: linear-gradient(135deg, #00e5ff 0%, #8b5cf6 50%, #00e5ff 100%);
         -webkit-background-clip: text;
@@ -89,11 +124,15 @@ st.markdown(
         font-size: 2.5rem;
         font-weight: 700;
         letter-spacing: -0.5px;
+        position: relative;
+        z-index: 1;
     }
     .futuristic-subheader {
         color: #94a3b8;
         font-size: 1rem;
         margin-top: -0.5rem;
+        position: relative;
+        z-index: 1;
     }
     .footer {
         color: #64748b;
@@ -108,11 +147,10 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown('<p class="futuristic-header">:material/straighten: Surface Auto-Annotator</p>', unsafe_allow_html=True)
-st.markdown(
-    '<p class="futuristic-subheader">AI-powered paved surface annotation — road, walkway, bikepath &amp; cars</p>',
-    unsafe_allow_html=True,
-)
+st.markdown('<div class="main-header">'
+    '<p class="futuristic-header">:material/straighten: Surface Auto-Annotator</p>'
+    '<p class="futuristic-subheader">AI-powered paved surface annotation — road, walkway, bikepath &amp; cars</p>'
+    '</div>', unsafe_allow_html=True)
 
 st.space("medium")
 
