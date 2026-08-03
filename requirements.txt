@@ -5,5 +5,5 @@ transformers
 numpy
 Pillow
 safetensors
-opencv-python
+opencv-python-headless
 ultralytics

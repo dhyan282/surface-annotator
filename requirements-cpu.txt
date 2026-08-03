@@ -1,2 +1,5 @@
+# PyTorch with CPU index - for Streamlit Community Cloud
+# NOTE: opencv-python-headless is in requirements.txt
+# to avoid libGL.so.1 dependency issues
 torch==2.0.1
 torchvision==0.15.2
