@@ -81,53 +81,49 @@ def load_annotator(
 st.markdown(
     """
     <style>
-    @keyframes gridMove {
-        0% { background-position: 0 0; }
-        100% { background-position: 40px 40px; }
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
-    @keyframes pulse {
-        0%, 100% { opacity: 0.6; }
-        50% { opacity: 1; }
-    }
-    @keyframes scanline {
-        0% { top: -5%; }
-        100% { top: 105%; }
-    }
-    @keyframes glowPulse {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        25% { transform: translate(30px, -20px) scale(1.1); }
-        50% { transform: translate(-20px, 30px) scale(0.95); }
-        75% { transform: translate(10px, 10px) scale(1.05); }
+    @keyframes dotPulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.6; }
     }
     .stApp {
         background: #0a0e17 !important;
+    }
+    .bg-gradient {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(135deg, #0a0e17 0%, #0f172a 25%, #0a0e17 50%, #1a1030 75%, #0a0e17 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .bg-dots {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: radial-gradient(rgba(0,229,255,0.04) 1px, transparent 1px);
+        background-size: 30px 30px;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .bg-vignette {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+        pointer-events: none;
+        z-index: 0;
     }
     .main-header {
         position: relative;
         padding: 2rem 2rem 1rem 2rem;
         margin: -1rem -1rem 1rem -1rem;
-        background: linear-gradient(135deg, #0a0e17 0%, #111827 50%, #0a0e17 100%);
-        border-bottom: 1px solid rgba(0, 229, 255, 0.2);
-        overflow: hidden;
-    }
-    .main-header::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image:
-            linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-        animation: gridMove 25s linear infinite;
-        pointer-events: none;
-    }
-    .main-header::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #00e5ff, #8b5cf6, transparent);
-        animation: pulse 3s ease-in-out infinite;
+        background: linear-gradient(135deg, rgba(10,14,23,0.9) 0%, rgba(17,24,39,0.9) 50%, rgba(10,14,23,0.9) 100%);
+        border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+        backdrop-filter: blur(10px);
     }
     .futuristic-header {
         background: linear-gradient(135deg, #00e5ff 0%, #8b5cf6 50%, #00e5ff 100%);
@@ -137,15 +133,11 @@ st.markdown(
         font-size: 2.5rem;
         font-weight: 700;
         letter-spacing: -0.5px;
-        position: relative;
-        z-index: 1;
     }
     .futuristic-subheader {
         color: #94a3b8;
         font-size: 1rem;
         margin-top: -0.5rem;
-        position: relative;
-        z-index: 1;
     }
     .footer {
         color: #64748b;
@@ -155,77 +147,18 @@ st.markdown(
         border-top: 1px solid #1e293b;
         margin-top: 3rem;
     }
-    .bg-grid {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image:
-            linear-gradient(rgba(0,229,255,0.015) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,229,255,0.015) 1px, transparent 1px);
-        background-size: 40px 40px;
-        animation: gridMove 30s linear infinite;
-        pointer-events: none;
-        z-index: 0;
-    }
-    .bg-glow {
-        position: fixed;
-        width: 600px; height: 600px;
-        background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 0;
-        transition: transform 0.3s ease-out;
-        animation: glowPulse 12s ease-in-out infinite;
-    }
-    .bg-glow-2 {
-        position: fixed;
-        width: 500px; height: 500px;
-        background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 0;
-        transition: transform 0.3s ease-out;
-        animation: glowPulse 15s ease-in-out infinite reverse;
-    }
-    .scanline {
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(0,229,255,0.08), transparent);
-        animation: scanline 5s linear infinite;
-        pointer-events: none;
-        z-index: 0;
-    }
     .content-wrapper {
         position: relative;
         z-index: 1;
     }
     </style>
-    <script>
-    document.addEventListener('mousemove', function(e) {
-        var x = e.clientX / window.innerWidth;
-        var y = e.clientY / window.innerHeight;
-        var glow1 = document.querySelector('.bg-glow');
-        var glow2 = document.querySelector('.bg-glow-2');
-        var grid = document.querySelector('.bg-grid');
-        if (glow1) {
-            glow1.style.transform = 'translate(' + ((x - 0.5) * 80) + 'px, ' + ((y - 0.5) * 80) + 'px)';
-        }
-        if (glow2) {
-            glow2.style.transform = 'translate(' + ((x - 0.5) * -60) + 'px, ' + ((y - 0.5) * -60) + 'px)';
-        }
-        if (grid) {
-            grid.style.backgroundPosition = ((x - 0.5) * 20) + 'px ' + ((y - 0.5) * 20) + 'px';
-        }
-    });
-    </script>
     """,
     unsafe_allow_html=True,
 )
 
-st.markdown('<div class="bg-grid"></div>'
-    '<div class="bg-glow" style="top:20%;left:10%;"></div>'
-    '<div class="bg-glow-2" style="bottom:10%;right:10%;"></div>'
-    '<div class="scanline"></div>'
+st.markdown('<div class="bg-gradient"></div>'
+    '<div class="bg-dots"></div>'
+    '<div class="bg-vignette"></div>'
     '<div class="content-wrapper">'
     '<div class="main-header">'
     '<p class="futuristic-header">:material/straighten: Surface Auto-Annotator</p>'
