@@ -367,11 +367,19 @@ with st.sidebar:
 
     st.divider()
     st.markdown("### :material/folder: Output Folders")
+    out_labels = st.text_input("Labels folder", str(LBL_DIR), help="Where annotation labels are saved")
+    out_preview = st.text_input("Previews folder", str(PREVIEW_DIR), help="Where preview images are saved")
+    out_annotated = st.text_input("Annotated folder", str(ANN_DIR), help="Where annotated images are saved")
+    out_cvat = st.text_input("CVAT XML path", str(ROOT / "cvat_annotations.xml"), help="Path for CVAT XML export")
+    LBL_DIR = Path(out_labels)
+    PREVIEW_DIR = Path(out_preview)
+    ANN_DIR = Path(out_annotated)
+    CVAT_PATH = Path(out_cvat)
     st.code(
         f"Labels:     {LBL_DIR}\n"
         f"Previews:   {PREVIEW_DIR}\n"
         f"Annotated:  {ANN_DIR}\n"
-        f"CVAT XML:   {ROOT / 'cvat_annotations.xml'}",
+        f"CVAT XML:   {CVAT_PATH}",
         language="text",
     )
     st.divider()
@@ -481,7 +489,7 @@ if uploaded and go:
     st.success(f":check_circle: Annotated {len(results_log)} image(s). Saved to: {ANN_DIR}")
 
     # ---- CVAT XML ----
-    cvat_path = ROOT / "cvat_annotations.xml"
+    cvat_path = CVAT_PATH
     if export_cvat_xml is None:
         st.warning("CVAT export unavailable: annotator_core has no export_cvat_xml")
     else:
