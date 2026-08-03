@@ -1,6 +1,6 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
-torchvision
+# For Streamlit Cloud - install PyTorch from official index
+# This avoids CUDA dependencies which don't work on GPU-free Cloud instances
+torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cpu
 streamlit
 transformers
 numpy
