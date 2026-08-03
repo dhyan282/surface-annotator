@@ -1,13 +1,5 @@
-# For Streamlit Community Cloud - CPU-only PyTorch installation
-# This must be the ONLY file in requirements.txt for Streamlit Cloud
-# The --index-url flag is critical - it avoids CUDA dependencies
-# which fail on GPU-free Cloud instances
-
-# PyTorch MUST come FIRST and include --index-url
-# This is the key fix for Streamlit Cloud deployment
-torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cpu
-
-# All other dependencies
+# For Streamlit Community Cloud - all packages except PyTorch
+# PyTorch with --index-url is in requirements-cpu.txt
 streamlit
 transformers
 numpy
