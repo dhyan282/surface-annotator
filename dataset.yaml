@@ -3,4 +3,7 @@ train: images
 val: images
 
 names:
-  0: surface_surface
+  0: surface_road
+  1: surface_walkway
+  2: surface_bikepath
+  3: car
