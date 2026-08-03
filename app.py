@@ -81,11 +81,6 @@ def load_annotator(
 st.markdown(
     """
     <style>
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
     @keyframes float1 {
         0%, 100% { transform: translate(0, 0) rotate(0deg); }
         25% { transform: translate(30px, -20px) rotate(5deg); }
@@ -122,9 +117,7 @@ st.markdown(
     .bg-gradient {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(135deg, #0a0e17 0%, #0f172a 25%, #0a0e17 50%, #1a1030 75%, #0a0e17 100%);
-        background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
+        background: #0a0e17;
         pointer-events: none;
         z-index: 0;
     }
