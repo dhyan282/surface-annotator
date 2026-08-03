@@ -89,6 +89,17 @@ st.markdown(
         0%, 100% { opacity: 0.6; }
         50% { opacity: 1; }
     }
+    @keyframes scanline {
+        0% { top: -5%; }
+        100% { top: 105%; }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
+    .stApp {
+        background: #0a0e17 !important;
+    }
     .main-header {
         position: relative;
         padding: 2rem 2rem 1rem 2rem;
@@ -142,12 +153,61 @@ st.markdown(
         border-top: 1px solid #1e293b;
         margin-top: 3rem;
     }
+    .bg-grid {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image:
+            linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: gridMove 30s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .bg-glow {
+        position: fixed;
+        top: 20%; left: 10%;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        animation: float 8s ease-in-out infinite;
+    }
+    .bg-glow-2 {
+        position: fixed;
+        bottom: 10%; right: 10%;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        animation: float 10s ease-in-out infinite reverse;
+    }
+    .scanline {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
+        animation: scanline 4s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-st.markdown('<div class="main-header">'
+st.markdown('<div class="bg-grid"></div>'
+    '<div class="bg-glow"></div>'
+    '<div class="bg-glow-2"></div>'
+    '<div class="scanline"></div>'
+    '<div class="content-wrapper">'
+    '<div class="main-header">'
     '<p class="futuristic-header">:material/straighten: Surface Auto-Annotator</p>'
     '<p class="futuristic-subheader">AI-powered paved surface annotation — road, walkway, bikepath &amp; cars</p>'
     '</div>', unsafe_allow_html=True)
@@ -450,6 +510,7 @@ st.markdown(
     '<div class="footer">'
     ':material/straighten: Surface Auto-Annotator &mdash; '
     'Built with Streamlit &amp; SegFormer &mdash; '
-    ':material/copyright: 2026</div>',
+    ':material/copyright: 2026</div>'
+    '</div>',
     unsafe_allow_html=True,
 )
