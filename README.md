@@ -78,8 +78,14 @@ annotations.
 cd C:\Users\dhyan\surface-annotator
 python -m venv .venv
 .venv\Scripts\activate
+python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 python -m pip install -r requirements.txt
 ```
+
+> `torch`/`torchvision` are intentionally **not** in `requirements.txt` (the
+> CPU-only wheels come from the PyTorch index, not PyPI — pinning them there
+> would pull the multi-GB CUDA build on Linux). Install them as above, or
+> follow your platform's PyTorch install guide.
 
 ## Run the web UI
 
@@ -116,6 +122,40 @@ python annotate.py
 | `cvat_annotations.xml` | CVAT-importable polygon annotations (registers `surface_road`, `surface_walkway`, `surface_bikepath`, and `car` when car detection is on). |
 | `summary.csv` | Per-image counts and areas. |
 | `classes.txt` / `dataset.yaml` | YOLO dataset config, one line per class. |
+
+## Deploy to Hugging Face Spaces (free)
+
+This app deploys to a **free** Hugging Face Space (Docker SDK) — no Render, no
+credit card. The build uses CPU-only torch so the image stays small.
+
+**Prerequisites**
+- A free account at <https://huggingface.co/join>
+- A **Write** access token at <https://huggingface.co/settings/tokens>
+- `git` installed, and a commit on your local repo (`main`)
+
+**Deploy (one command)**
+
+Windows PowerShell:
+```powershell
+.\deploy.ps1
+```
+
+Git Bash / Linux / macOS:
+```bash
+bash deploy.sh
+```
+
+Each script prompts for your HF username, space name, and token (token is kept
+in memory only), then:
+1. Creates the Space (`sdk: docker`, `hardware: cpu-basic`, public),
+2. Adds it as a git remote (`hf`),
+3. Pushes `main`, which builds the Docker image and boots the app.
+
+**Speed it up with the first model download:** add `HUGGING_FACE_HUB_TOKEN` or
+pre-warm the model cache so users don't wait ~30s on the first annotation.
+
+**Space URL:** `https://huggingface.co/spaces/<user>/<space>`
+**Build logs:** `https://huggingface.co/spaces/<user>/<space>/logs`
 
 ## Import into CVAT
 

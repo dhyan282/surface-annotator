@@ -1,7 +1,7 @@
-streamlit
-torch
-transformers
-opencv-python-headless
-Pillow
-numpy
-ultralytics
+streamlit==1.60.0
+transformers==5.14.1
+opencv-python-headless==5.0.0.93
+Pillow==12.3.0
+numpy==2.5.1
+ultralytics==8.4.115
+safetensors==0.8.0
