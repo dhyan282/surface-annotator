@@ -9,6 +9,9 @@ cars. Each class is emitted as its own polygon for precise annotation.
 
 import sys
 from pathlib import Path
+import os
+
+os.environ["OPENCV_OPENGL_RUNTIME"] = "none"
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
