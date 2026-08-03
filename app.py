@@ -48,6 +48,8 @@ st.set_page_config(
     layout="wide",
 )
 
+st.logo("logo.svg")
+
 
 @st.cache_resource
 def load_annotator(
@@ -84,29 +86,22 @@ st.markdown(
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
         letter-spacing: -0.5px;
     }
     .futuristic-subheader {
         color: #94a3b8;
-        font-size: 1.1rem;
+        font-size: 1rem;
         margin-top: -0.5rem;
     }
-    .glow-border {
-        border: 1px solid rgba(0, 229, 255, 0.3);
-        border-radius: 12px;
-        padding: 1.5rem;
-        background: rgba(17, 24, 39, 0.6);
-        backdrop-filter: blur(10px);
-    }
-    .class-badge {
-        display: inline-block;
-        padding: 2px 10px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin: 2px;
+    .footer {
+        color: #64748b;
+        font-size: 0.8rem;
+        text-align: center;
+        padding: 2rem 0 1rem 0;
+        border-top: 1px solid #1e293b;
+        margin-top: 3rem;
     }
     </style>
     """,
@@ -412,3 +407,11 @@ if uploaded and go:
 
 elif uploaded and not go:
     st.info(f":material/cloud_upload: {len(uploaded)} image(s) ready. Click **Annotate** to start.")
+
+st.markdown(
+    '<div class="footer">'
+    ':material/straighten: Surface Auto-Annotator &mdash; '
+    'Built with Streamlit &amp; SegFormer &mdash; '
+    ':material/copyright: 2026</div>',
+    unsafe_allow_html=True,
+)
