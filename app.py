@@ -83,7 +83,7 @@ st.markdown(
     <style>
     @keyframes gridMove {
         0% { background-position: 0 0; }
-        100% { background-position: 50px 50px; }
+        100% { background-position: 40px 40px; }
     }
     @keyframes pulse {
         0%, 100% { opacity: 0.6; }
@@ -93,9 +93,11 @@ st.markdown(
         0% { top: -5%; }
         100% { top: 105%; }
     }
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
+    @keyframes glowPulse {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(30px, -20px) scale(1.1); }
+        50% { transform: translate(-20px, 30px) scale(0.95); }
+        75% { transform: translate(10px, 10px) scale(1.05); }
     }
     .stApp {
         background: #0a0e17 !important;
@@ -115,8 +117,8 @@ st.markdown(
         background-image:
             linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: gridMove 20s linear infinite;
+        background-size: 40px 40px;
+        animation: gridMove 25s linear infinite;
         pointer-events: none;
     }
     .main-header::after {
@@ -157,8 +159,8 @@ st.markdown(
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         background-image:
-            linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px);
+            linear-gradient(rgba(0,229,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,255,0.015) 1px, transparent 1px);
         background-size: 40px 40px;
         animation: gridMove 30s linear infinite;
         pointer-events: none;
@@ -166,30 +168,30 @@ st.markdown(
     }
     .bg-glow {
         position: fixed;
-        top: 20%; left: 10%;
         width: 600px; height: 600px;
-        background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
         border-radius: 50%;
         pointer-events: none;
         z-index: 0;
-        animation: float 8s ease-in-out infinite;
+        transition: transform 0.3s ease-out;
+        animation: glowPulse 12s ease-in-out infinite;
     }
     .bg-glow-2 {
         position: fixed;
-        bottom: 10%; right: 10%;
         width: 500px; height: 500px;
-        background: radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
         border-radius: 50%;
         pointer-events: none;
         z-index: 0;
-        animation: float 10s ease-in-out infinite reverse;
+        transition: transform 0.3s ease-out;
+        animation: glowPulse 15s ease-in-out infinite reverse;
     }
     .scanline {
         position: fixed;
         top: 0; left: 0; right: 0;
         height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
-        animation: scanline 4s linear infinite;
+        background: linear-gradient(90deg, transparent, rgba(0,229,255,0.08), transparent);
+        animation: scanline 5s linear infinite;
         pointer-events: none;
         z-index: 0;
     }
@@ -198,13 +200,27 @@ st.markdown(
         z-index: 1;
     }
     </style>
+    <script>
+    document.addEventListener('mousemove', function(e) {
+        var x = e.clientX / window.innerWidth;
+        var y = e.clientY / window.innerHeight;
+        var glow1 = document.querySelector('.bg-glow');
+        var glow2 = document.querySelector('.bg-glow-2');
+        if (glow1) {
+            glow1.style.transform = 'translate(' + ((x - 0.5) * 40) + 'px, ' + ((y - 0.5) * 40) + 'px)';
+        }
+        if (glow2) {
+            glow2.style.transform = 'translate(' + ((x - 0.5) * -30) + 'px, ' + ((y - 0.5) * -30) + 'px)';
+        }
+    });
+    </script>
     """,
     unsafe_allow_html=True,
 )
 
 st.markdown('<div class="bg-grid"></div>'
-    '<div class="bg-glow"></div>'
-    '<div class="bg-glow-2"></div>'
+    '<div class="bg-glow" style="top:20%;left:10%;"></div>'
+    '<div class="bg-glow-2" style="bottom:10%;right:10%;"></div>'
     '<div class="scanline"></div>'
     '<div class="content-wrapper">'
     '<div class="main-header">'
