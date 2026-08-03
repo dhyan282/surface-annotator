@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+
+# Local tooling scaffolding (empty skill dirs)
+.agents/
+.claude/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Hugging Face Hub cache (SegFormer model)
+models/.locks/
+models/models--*/
+
+# Large / unused model weights
+models/yolov8n-seg.pt
+
+# Generated image data, labels, and exports (regenerable via app / CLI)
+images/
+labels/
+preview/
+annotated images/
+cvat_annotations.xml
+summary.csv
+classes.txt
+dataset.yaml

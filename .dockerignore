@@ -1,0 +1,21 @@
+.git/
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+models/
+images/
+labels/
+preview/
+annotated images/
+cvat_annotations.xml
+summary.csv
+classes.txt
+dataset.yaml
+
+.agents/
+.claude/
