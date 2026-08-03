@@ -377,7 +377,7 @@ with st.sidebar:
     st.markdown("### :material/palette: Classes Detected")
     st.markdown(
         f'<span class="class-badge" style="background:rgba(239,68,68,0.2);color:#ef4444;">'
-        f"0 {prefix}road</span>",
+        "0 surface_road</span>",
         unsafe_allow_html=True,
     )
     st.caption("Single surface class - all paved surfaces (road, walkway, bikepath) merged together.")
