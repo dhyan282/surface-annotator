@@ -1,6 +1,6 @@
 """
 Surface Auto-Annotator - Web UI
--------------------------------
+--------------------------------
 Run:  streamlit run app.py
 Drag-and-drop images, hit Annotate.
 Detects paved surface classes (road, walkway, bikepath) and -- optionally --
@@ -13,11 +13,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
-import shutil
 import streamlit as st
 
-# Reasonable defaults for the UI; the canonical config lives in
-# annotator_core.py and we import those constants below.
 try:
     import annotator_core as _core
     Annotator = _core.Annotator
@@ -78,9 +75,58 @@ def load_annotator(
     )
 
 
+# ---- Futuristic header ----
+st.markdown(
+    """
+    <style>
+    .futuristic-header {
+        background: linear-gradient(135deg, #00e5ff 0%, #8b5cf6 50%, #00e5ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    .futuristic-subheader {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        margin-top: -0.5rem;
+    }
+    .glow-border {
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(10px);
+    }
+    .class-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 2px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown('<p class="futuristic-header">:material/straighten: Surface Auto-Annotator</p>', unsafe_allow_html=True)
+st.markdown(
+    '<p class="futuristic-subheader">AI-powered paved surface annotation — road, walkway, bikepath &amp; cars</p>',
+    unsafe_allow_html=True,
+)
+
+st.space("medium")
+
 # ---- Sidebar ----
 with st.sidebar:
-    st.header("Model")
+    st.markdown("## :material/settings: Configuration")
+    st.divider()
+
+    st.markdown("### :material/science: Model")
     model_label = st.selectbox(
         "Model size (speed vs precision)",
         list(MODEL_VARIANTS.keys()),
@@ -94,7 +140,7 @@ with st.sidebar:
         "Tiled keeps native resolution for very high-res photos (slower).",
     )
 
-    st.header("Precision")
+    st.markdown("### :material/tune: Precision")
     tta = st.toggle(
         "Test-time augmentation (TTA)",
         value=True,
@@ -122,7 +168,7 @@ with st.sidebar:
         "mask and emits it as its own surface_bikepath polygon (class 2).",
     )
 
-    st.header("Classes")
+    st.markdown("### :material/label: Classes")
     conf = st.slider(
         "Surface confidence threshold",
         0.10, 0.90, 0.40, 0.05,
@@ -139,7 +185,7 @@ with st.sidebar:
         help="Prepended to the class names in all annotation outputs.",
     )
 
-    st.header("Advanced")
+    st.markdown("### :material/rocket_launch: Advanced")
     dual = st.toggle(
         "Dual model (2nd SegFormer-B0)",
         value=DUAL_MODE,
@@ -161,7 +207,7 @@ with st.sidebar:
     )
 
     st.divider()
-    st.write("**Output folders** (auto-created):")
+    st.markdown("### :material/folder: Output Folders")
     st.code(
         f"Labels:     {LBL_DIR}\n"
         f"Previews:   {PREVIEW_DIR}\n"
@@ -170,41 +216,44 @@ with st.sidebar:
         language="text",
     )
     st.divider()
-    st.write("**Classes detected**")
-    st.write("`0` " + prefix + "road  *(red)*")
-    st.write("`1` " + prefix + "walkway  *(green)*")
-    st.write("`2` " + prefix + "bikepath  *(cyan, when detected)*")
-    st.write("`3` car" + ("  *(blue, clipped to surface)*" if detect_cars else "  *(disabled)*"))
-    st.divider()
-    st.write("Each class is drawn with its own outline color in the preview.")
+    st.markdown("### :material/palette: Classes Detected")
+    st.markdown(
+        f'<span class="class-badge" style="background:rgba(239,68,68,0.2);color:#ef4444;">'
+        f"0 {prefix}road</span> "
+        f'<span class="class-badge" style="background:rgba(16,185,129,0.2);color:#10b981;">'
+        f"1 {prefix}walkway</span> "
+        f'<span class="class-badge" style="background:rgba(6,182,212,0.2);color:#06b6d4;">'
+        f"2 {prefix}bikepath</span> "
+        f'<span class="class-badge" style="background:rgba(59,130,246,0.2);color:#3b82f6;">'
+        f"3 car</span>",
+        unsafe_allow_html=True,
+    )
+    st.caption("Each class is drawn with its own outline color in the preview.")
 
 
 # ---- Main page ----
-st.title("Surface Auto-Annotator")
-st.write(
-    "Drag and drop road / walkway / bikepath photos. The annotator emits "
-    "**per-class polygons**: " + prefix + "road, " + prefix + "walkway, "
-    "and " + prefix + "bikepath. Green vegetation is excluded. Optionally "
-    "annotates overlapping cars as a separate class."
-)
+st.space("medium")
 
 uploaded = st.file_uploader(
-    "Drop images here (jpg, jpeg, png, bmp, webp)",
+    ":material/cloud_upload: Drop images here (jpg, jpeg, png, bmp, webp)",
     type=["jpg", "jpeg", "png", "bmp", "webp"],
     accept_multiple_files=True,
+    label_visibility="collapsed",
 )
 
 col1, col2, col3 = st.columns(3)
 with col1:
     go = st.button(
-        "Annotate", type="primary", disabled=not uploaded,
-        icon=":material/auto_awesome:",
+        ":material/auto_awesome: Annotate",
+        type="primary",
+        disabled=not uploaded,
+        use_container_width=True,
     )
 with col2:
-    clear = st.button("Clear uploaded", icon=":material/refresh:")
+    clear = st.button(":material/refresh: Clear uploaded", use_container_width=True)
 with col3:
     open_folder = st.button(
-        "Open annotated folder", icon=":material/folder_open:"
+        ":material/folder_open: Open annotated folder", use_container_width=True
     )
 
 if clear:
@@ -227,7 +276,7 @@ def class_color_swatch_bgr(bgr):
 
 if uploaded and go:
     IMG_DIR.mkdir(parents=True, exist_ok=True)
-    st.info("Loading model (first time for a new size may take ~30s)...")
+    st.info(":hourglass: Loading model (first time for a new size may take ~30s)...")
     model_name = MODEL_VARIANTS[model_label]
     try:
         annotator = load_annotator(
@@ -249,7 +298,7 @@ if uploaded and go:
     annotator.green_exclude = green
     annotator.class_prefix = prefix
     annotator.fast_size = FAST_SIZE
-    st.success("Model loaded.")
+    st.success(":check_circle: Model loaded.")
 
     progress = st.progress(0.0, text="Starting...")
     results_log = []
@@ -270,7 +319,7 @@ if uploaded and go:
             st.error(f"Failed: {up.name} -- {e}")
 
     progress.progress(1.0, text="Done!")
-    st.success(f"Annotated {len(results_log)} image(s). Saved to: {ANN_DIR}")
+    st.success(f":check_circle: Annotated {len(results_log)} image(s). Saved to: {ANN_DIR}")
 
     # ---- CVAT XML ----
     cvat_path = ROOT / "cvat_annotations.xml"
@@ -284,13 +333,13 @@ if uploaded and go:
                 class_prefix=prefix,
                 detect_cars=detect_cars,
             )
-            st.success(f"CVAT XML: `{cvat_path}`")
+            st.success(f":code: CVAT XML: `{cvat_path}`")
         except Exception as e:
             st.warning(f"CVAT export failed: {e}")
 
     # ---- Summary table ----
     st.divider()
-    st.subheader("Summary")
+    st.subheader(":bar_chart: Summary")
     summary_cols = st.columns(4)
     totals = {"road": 0, "walkway": 0, "bike": 0, "car": 0}
     for name, r in results_log:
@@ -305,61 +354,61 @@ if uploaded and go:
 
     # ---- Per-image results ----
     st.divider()
-    st.subheader("Per-image results")
+    st.subheader(":material/image: Per-image results")
     for name, r in results_log:
-        c1, c2 = st.columns([2, 1])
-        with c1:
-            st.markdown(
-                f"**{name}**  &nbsp; "
-                f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[0])}'>"
-                f":material/straighten: {prefix}road {r.get('road_polys', 0)}</span> &nbsp; "
-                f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[1])}'>"
-                f":material/directions_walk: {prefix}walkway {r.get('walkway_polys', 0)}</span> &nbsp; "
-                f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[2])}'>"
-                f":material/directions_bike: {prefix}bikepath {r.get('bike_polys', 0)}</span> &nbsp; "
-                f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[3])}'>"
-                f":material/directions_car: car {r.get('car_polys', 0)}</span>",
-                unsafe_allow_html=True,
-            )
-            st.caption("Annotated preview")
-            st.image(str(r["preview_path"]))
-        with c2:
-            st.caption("Polygon breakdown")
-            poly_rows = [
-                {
-                    "class": f"{prefix}road",
-                    "polys": r.get("road_polys", 0),
-                    "approx. pixels": r.get("polygons", [{}])[0].get("area", 0)
-                    if r.get("road_polys", 0)
-                    else 0,
-                },
-                {
-                    "class": f"{prefix}walkway",
-                    "polys": r.get("walkway_polys", 0),
-                    "approx. pixels": 0,
-                },
-                {
-                    "class": f"{prefix}bikepath",
-                    "polys": r.get("bike_polys", 0),
-                    "approx. pixels": 0,
-                },
-                {
-                    "class": "car",
-                    "polys": r.get("car_polys", 0),
-                    "approx. pixels": 0,
-                },
-            ]
-            st.dataframe(poly_rows, hide_index=True, width="stretch")
-            with open(r["preview_path"], "rb") as f:
-                st.download_button(
-                    f"Download {name}",
-                    data=f.read(),
-                    file_name=name,
-                    mime="image/jpeg",
-                    icon=":material/download:",
-                    width="stretch",
+        with st.container(border=True):
+            c1, c2 = st.columns([2, 1])
+            with c1:
+                st.markdown(
+                    f"**{name}**  &nbsp; "
+                    f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[0])}'>"
+                    f":material/straighten: {prefix}road {r.get('road_polys', 0)}</span> &nbsp; "
+                    f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[1])}'>"
+                    f":material/directions_walk: {prefix}walkway {r.get('walkway_polys', 0)}</span> &nbsp; "
+                    f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[2])}'>"
+                    f":material/directions_bike: {prefix}bikepath {r.get('bike_polys', 0)}</span> &nbsp; "
+                    f"<span style='color:{class_color_swatch_bgr(OVERLAY_COLORS_BGR[3])}'>"
+                    f":material/directions_car: car {r.get('car_polys', 0)}</span>",
+                    unsafe_allow_html=True,
                 )
-        st.divider()
+                st.caption("Annotated preview")
+                st.image(str(r["preview_path"]))
+            with c2:
+                st.caption("Polygon breakdown")
+                poly_rows = [
+                    {
+                        "class": f"{prefix}road",
+                        "polys": r.get("road_polys", 0),
+                        "approx. pixels": r.get("polygons", [{}])[0].get("area", 0)
+                        if r.get("road_polys", 0)
+                        else 0,
+                    },
+                    {
+                        "class": f"{prefix}walkway",
+                        "polys": r.get("walkway_polys", 0),
+                        "approx. pixels": 0,
+                    },
+                    {
+                        "class": f"{prefix}bikepath",
+                        "polys": r.get("bike_polys", 0),
+                        "approx. pixels": 0,
+                    },
+                    {
+                        "class": "car",
+                        "polys": r.get("car_polys", 0),
+                        "approx. pixels": 0,
+                    },
+                ]
+                st.dataframe(poly_rows, hide_index=True, width="stretch")
+                with open(r["preview_path"], "rb") as f:
+                    st.download_button(
+                        f":material/download: Download {name}",
+                        data=f.read(),
+                        file_name=name,
+                        mime="image/jpeg",
+                        icon=":material/download:",
+                        width="stretch",
+                    )
 
 elif uploaded and not go:
-    st.info(f"{len(uploaded)} image(s) ready. Click **Annotate** to start.")
+    st.info(f":material/cloud_upload: {len(uploaded)} image(s) ready. Click **Annotate** to start.")
