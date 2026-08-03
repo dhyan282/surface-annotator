@@ -31,3 +31,6 @@ secondaryBackgroundColor = "#111827"
 textColor = "#e2e8f0"
 borderColor = "#1e293b"
 primaryColor = "#00e5ff"
+
+[server]
+packages = ["libgl1-mesa-glx", "libglib2.0-0"]
