@@ -366,14 +366,20 @@ with st.sidebar:
     )
 
     st.divider()
+    st.markdown("### :material/save: Save Annotations")
+    save_path = st.text_input(
+        "Annotation save path",
+        value=str(ANN_DIR),
+        help="Full path where annotated images and labels will be saved",
+    )
+    save_path = Path(save_path)
     st.markdown("### :material/folder: Output Folders")
     out_labels = st.text_input("Labels folder", str(LBL_DIR), help="Where annotation labels are saved")
     out_preview = st.text_input("Previews folder", str(PREVIEW_DIR), help="Where preview images are saved")
-    out_annotated = st.text_input("Annotated folder", str(ANN_DIR), help="Where annotated images are saved")
     out_cvat = st.text_input("CVAT XML path", str(ROOT / "cvat_annotations.xml"), help="Path for CVAT XML export")
     LBL_DIR = Path(out_labels)
     PREVIEW_DIR = Path(out_preview)
-    ANN_DIR = Path(out_annotated)
+    ANN_DIR = save_path
     CVAT_PATH = Path(out_cvat)
     st.code(
         f"Labels:     {LBL_DIR}\n"
